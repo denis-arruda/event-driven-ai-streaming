@@ -2,13 +2,13 @@
 
 ## Project Overview
 
-Projet with 3 modules. Each module is an event processor and use Quarkus MicroProfile template and Boundary-Control-Entity (BCE) architectural pattern. The project should follow clean separation of concerns with JAX-RS resources, MicroProfile Config, CDI, and Health checks.
+Project with 3 modules. Each module is an event processor. Each module uses Quarkus MicroProfile and follows Boundary-Control-Entity (BCE) architectural pattern. The project should follow clean separation of concerns with Kafka Producer/Consumer, MicroProfile Config, CDI, and Health checks.
 
 ## Architecture
 
 ### BCE Pattern
 
-- **Boundary**: JAX-RS resources, topic consumer, topic producers and health checks - coarse-grained components exposing functionality
+- **Boundary**: Kafka consumer, Kafka producers and health checks - coarse-grained components exposing functionality
 - **Control**: Business logic and procedural code - stateless processing
 - **Entity**: Domain objects, data classes, and entities
 
