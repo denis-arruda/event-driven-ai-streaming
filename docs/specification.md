@@ -61,14 +61,15 @@ Java 25 records must be used for domain entities and event models.
 
 # 4. Kafka Topics
 
-| Topic                        | Producer              | Consumer              |
-| ---------------------------- | --------------------- | --------------------- |
-| content-published            | CMS                   | Enrichment Processor  |
-| content-enriched             | Enrichment Processor  | Sensitivity Processor |
-| content-sensitivity-analyzed | Sensitivity Processor | Marketing Processor   |
-| ai-content-finalized         | Marketing Processor   | Downstream Systems    |
-
-Each processor must define a Dead Letter Topic (DLQ).
+| Topic                            | Producer              | Consumer              |
+| -------------------------------- | --------------------- | --------------------- |
+| content-published                | CMS                   | Enrichment Processor  |
+| content-enriched                 | Enrichment Processor  | Sensitivity Processor |
+| content-sensitivity-analyzed     | Sensitivity Processor | Marketing Processor   |
+| ai-content-finalized             | Marketing Processor   | Downstream Systems    |
+| content-published-dlq            | Enrichment Processor  | —                     |
+| content-enriched-dlq             | Sensitivity Processor | —                     |
+| content-sensitivity-analyzed-dlq | Marketing Processor   | —                     |
 
 ---
 
