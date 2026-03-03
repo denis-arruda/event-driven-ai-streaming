@@ -21,6 +21,10 @@ cd content-enrichment && ../mvnw quarkus:dev
 
 Replace `content-enrichment` with any module name.
 
+## Dev UI
+
+With a module running in dev mode, open [http://localhost:9090/q/dev](http://localhost:9090/q/dev) in your browser.
+
 ## Tests
 
 ```bash
