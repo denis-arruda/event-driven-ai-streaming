@@ -23,7 +23,13 @@ Replace `content-enrichment` with any module name.
 
 ## Dev UI
 
-With a module running in dev mode, open [http://localhost:9090/q/dev](http://localhost:9090/q/dev) in your browser.
+With a module running in dev mode, open its Dev UI in the browser:
+
+| Module | Port | Dev UI |
+|---|---|---|
+| `content-enrichment` | 9090 | http://localhost:9090/q/dev |
+| `sensitivity-compliance` | 9091 | http://localhost:9091/q/dev |
+| `marketing-narrative` | 9093 | http://localhost:9093/q/dev |
 
 ## Tests
 
