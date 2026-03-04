@@ -44,6 +44,45 @@ With a module running in dev mode, open its Dev UI in the browser:
 ./mvnw clean package
 ```
 
+## Container Images
+
+Container images are built using [Quarkus JIB](https://quarkus.io/guides/container-image#jib) (`quarkus-container-image-jib`).
+
+JIB was chosen over the Buildpack extension because this is a multi-module Maven project: the Buildpack extension rebuilds from source inside an isolated container where the parent POM (`event-driven-ai-streaming:pom`) is not resolvable, causing a fatal build failure. JIB avoids this entirely by packaging the pre-built JAR directly into the image — no Docker daemon or source rebuild required.
+
+Build all images:
+
+```bash
+./mvnw package -Dquarkus.container-image.build=true
+```
+
+Images produced:
+
+| Module | Image |
+|---|---|
+| `content-enrichment` | `denisarruda/content-enrichment:1.0-SNAPSHOT` |
+| `sensitivity-compliance` | `denisarruda/sensitivity-compliance:1.0-SNAPSHOT` |
+| `marketing-narrative` | `denisarruda/marketing-narrative:1.0-SNAPSHOT` |
+
+## Docker Compose
+
+Start the full stack (Kafka + all modules):
+
+```bash
+export LLM_API_KEY=<your-openai-api-key>
+docker compose up
+```
+
+| Service | Host port |
+|---|---|
+| Kafka (internal) | `9092` |
+| Kafka (external / host access) | `9094` |
+| `content-enrichment` | `9090` |
+| `sensitivity-compliance` | `9091` |
+| `marketing-narrative` | `9093` |
+
+Connect to Kafka from the host at `localhost:9094`.
+
 ## Specification
 
 See [docs/specification.md](docs/specification.md).
