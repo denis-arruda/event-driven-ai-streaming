@@ -1,0 +1,95 @@
+{
+  "uid": "kafka-messaging",
+  "title": "Kafka Messaging",
+  "tags": ["kafka", "messaging"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "refresh": "30s",
+  "time": { "from": "now-1h", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Messages Consumed (rate)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "rate(messaging_consume_duration_seconds_count[1m])",
+          "legendFormat": "{{job}} - {{messaging_destination_name}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "msgps" }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Messages Published (rate)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "rate(messaging_publish_duration_seconds_count[1m])",
+          "legendFormat": "{{job}} - {{messaging_destination_name}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "msgps" }
+      }
+    },
+    {
+      "id": 3,
+      "title": "Consumer Processing Latency (p95)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, rate(messaging_process_duration_seconds_bucket[5m]))",
+          "legendFormat": "{{job}} - {{messaging_destination_name}} p95"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "s" }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Publish Latency (p95)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, rate(messaging_publish_duration_seconds_bucket[5m]))",
+          "legendFormat": "{{job}} - {{messaging_destination_name}} p95"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "s" }
+      }
+    },
+    {
+      "id": 5,
+      "title": "Messaging Errors",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 16, "w": 24, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "rate(messaging_consume_duration_seconds_count{error_type!=\"\"}[5m])",
+          "legendFormat": "{{job}} consume errors - {{messaging_destination_name}}"
+        },
+        {
+          "expr": "rate(messaging_publish_duration_seconds_count{error_type!=\"\"}[5m])",
+          "legendFormat": "{{job}} publish errors - {{messaging_destination_name}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "color": { "fixedColor": "red", "mode": "fixed" } }
+      }
+    }
+  ]
+}

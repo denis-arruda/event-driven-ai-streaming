@@ -1,5 +1,18 @@
 services:
 
+  lgtm:
+    image: grafana/otel-lgtm:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3000/api/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 90s
+
   kafka:
     image: apache/kafka:latest
     environment:
@@ -28,9 +41,12 @@ services:
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       LLM_API_KEY: ${LLM_API_KEY}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
     depends_on:
       kafka:
         condition: service_healthy
+      lgtm:
+        condition: service_started
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/q/health || exit 1"]
       interval: 15s
@@ -45,9 +61,12 @@ services:
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       LLM_API_KEY: ${LLM_API_KEY}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
     depends_on:
       kafka:
         condition: service_healthy
+      lgtm:
+        condition: service_started
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/q/health || exit 1"]
       interval: 15s
@@ -62,9 +81,12 @@ services:
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       LLM_API_KEY: ${LLM_API_KEY}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
     depends_on:
       kafka:
         condition: service_healthy
+      lgtm:
+        condition: service_started
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/q/health || exit 1"]
       interval: 15s
