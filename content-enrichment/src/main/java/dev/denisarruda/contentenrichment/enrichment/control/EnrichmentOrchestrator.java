@@ -2,6 +2,8 @@ package dev.denisarruda.contentenrichment.enrichment.control;
 
 import dev.denisarruda.contentenrichment.enrichment.entity.ContentEnrichedEvent;
 import dev.denisarruda.contentenrichment.enrichment.entity.ContentPublishedEvent;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
@@ -16,10 +18,12 @@ public class EnrichmentOrchestrator {
     @Inject
     ContentEnrichmentAgent agent;
 
+    @WithSpan("content-enrichment.enrich")
     @Retry(maxRetries = 3, delay = 1, delayUnit = ChronoUnit.SECONDS, jitter = 200, jitterDelayUnit = ChronoUnit.MILLIS)
     @CircuitBreaker(requestVolumeThreshold = 4, failureRatio = 0.5, delay = 10, delayUnit = ChronoUnit.SECONDS)
     @Timeout(value = 60, unit = ChronoUnit.SECONDS)
     public ContentEnrichedEvent enrich(ContentPublishedEvent event) {
+        Span.current().setAttribute("content.id", event.contentId());
         var result = agent.analyze(event);
         return ContentEnrichedEvent.from(event, result);
     }
