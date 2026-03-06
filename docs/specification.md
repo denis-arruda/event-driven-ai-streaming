@@ -48,6 +48,45 @@ content-published
 
 All communication between components is asynchronous and topic-based. No synchronous HTTP calls are allowed between processors.
 
+```mermaid
+flowchart LR
+    CMS([CMS])
+
+    subgraph content-enrichment
+        CEP[Content Enrichment\nProcessor]
+    end
+
+    subgraph sensitivity-compliance
+        SCP[Sensitivity & Compliance\nProcessor]
+    end
+
+    subgraph marketing-narrative
+        MNP[Marketing Narrative\nProcessor]
+    end
+
+    DS([Downstream\nSystems])
+
+    CP[[content-published]]
+    CE[[content-enriched]]
+    CSA[[content-sensitivity-analyzed]]
+    ACF[[ai-content-finalized]]
+    CPDLQ[[content-published-dlq]]
+    CEDLQ[[content-enriched-dlq]]
+    CSADLQ[[content-sensitivity-analyzed-dlq]]
+
+    CMS --> CP
+    CP --> CEP
+    CEP --> CE
+    CEP -- failure --> CPDLQ
+    CE --> SCP
+    SCP --> CSA
+    SCP -- failure --> CEDLQ
+    CSA --> MNP
+    MNP --> ACF
+    MNP -- failure --> CSADLQ
+    ACF --> DS
+```
+
 ---
 
 # 4. Architectural Principles
