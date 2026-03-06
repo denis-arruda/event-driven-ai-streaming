@@ -1,12 +1,11 @@
 package dev.denisarruda.sensitivitycompliance.sensitivity.entity;
 
-import jakarta.json.Json;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import jakarta.json.Json;
 import java.io.StringReader;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 class ContentSensitivityAnalyzedEventTest {
 

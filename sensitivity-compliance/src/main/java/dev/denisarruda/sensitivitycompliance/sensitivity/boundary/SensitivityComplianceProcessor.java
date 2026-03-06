@@ -7,10 +7,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.inject.Inject;
 import jakarta.json.Json;
+import java.io.StringReader;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
-
-import java.io.StringReader;
 
 @ApplicationScoped
 class SensitivityComplianceProcessor {

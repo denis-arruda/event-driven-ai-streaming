@@ -3,7 +3,6 @@ package dev.denisarruda.marketingnarrative.marketing.entity;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
-
 import java.util.List;
 
 public record ContentSensitivityAnalyzedEvent(

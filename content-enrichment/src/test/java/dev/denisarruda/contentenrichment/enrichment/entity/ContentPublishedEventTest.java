@@ -1,9 +1,9 @@
 package dev.denisarruda.contentenrichment.enrichment.entity;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import jakarta.json.Json;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ContentPublishedEventTest {
 

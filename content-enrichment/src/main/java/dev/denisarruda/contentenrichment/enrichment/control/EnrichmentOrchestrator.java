@@ -6,11 +6,10 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.time.temporal.ChronoUnit;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
-
-import java.time.temporal.ChronoUnit;
 
 @ApplicationScoped
 public class EnrichmentOrchestrator {

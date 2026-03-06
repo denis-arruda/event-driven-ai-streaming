@@ -1,7 +1,6 @@
 package dev.denisarruda.sensitivitycompliance.sensitivity.entity;
 
 import dev.langchain4j.model.output.structured.Description;
-
 import java.util.List;
 
 public record SensitivityResult(
