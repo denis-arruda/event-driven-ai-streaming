@@ -4,7 +4,19 @@
 
 ---
 
-# 1. Purpose
+# 1. Business Perspective
+
+This project is an **automated content intelligence pipeline** that helps organizations publish content faster and more safely:
+
+- **Content Enrichment** — When content is published, AI automatically extracts themes, emotional tone, target audience, and keywords — eliminating manual content tagging.
+- **Sensitivity & Compliance** — AI evaluates every piece of content for age ratings, regional restrictions, and risk flags before it reaches audiences — reducing legal and reputational exposure.
+- **Marketing Asset Generation** — AI instantly produces headlines, taglines, and promotional copy — cutting time-to-market for content promotion.
+
+It transforms raw published content into compliance-checked, audience-ready marketing assets automatically, reducing manual effort and human error across the content lifecycle.
+
+---
+
+# 2. Purpose
 
 This document defines the specification for a Proof of Concept (PoC) of an AI-driven semantic processing pipeline for a streaming platform.
 
@@ -22,7 +34,7 @@ The final output is published to a Kafka topic for downstream systems.
 
 ---
 
-# 2. High-Level Architecture
+# 3. High-Level Architecture
 
 Flow of events:
 
@@ -38,7 +50,7 @@ All communication between components is asynchronous and topic-based. No synchro
 
 ---
 
-# 3. Architectural Principles
+# 4. Architectural Principles
 
 ## 3.1 Event-Driven Choreography
 
@@ -59,7 +71,7 @@ Java 25 records must be used for domain entities and event models.
 
 ---
 
-# 4. Kafka Topics
+# 5. Kafka Topics
 
 | Topic                            | Producer              | Consumer              |
 | -------------------------------- | --------------------- | --------------------- |
@@ -73,7 +85,7 @@ Java 25 records must be used for domain entities and event models.
 
 ---
 
-# 5. Event Model
+# 6. Event Model
 
 ## 5.1 Initial Event
 
@@ -94,11 +106,11 @@ Example payload:
 
 ---
 
-# 6. Agent Processors
+# 7. Agent Processors
 
 ---
 
-# 6.1 Content Enrichment Processor
+# 7.1 Content Enrichment Processor
 
 ## Input Topic
 
@@ -140,7 +152,7 @@ content-enriched
 
 ---
 
-# 6.2 Sensitivity & Compliance Processor
+# 7.2 Sensitivity & Compliance Processor
 
 ## Input Topic
 
@@ -175,7 +187,7 @@ content-sensitivity-analyzed
 
 ---
 
-# 6.3 Marketing Narrative Processor
+# 7.3 Marketing Narrative Processor
 
 ## Input Topic
 
@@ -216,7 +228,7 @@ The final topic ai-content-finalized contains the fully accumulated event.
 
 ---
 
-# 7. BCE Architecture Requirements
+# 8. BCE Architecture Requirements
 
 Each processor must follow BCE.
 
@@ -247,7 +259,7 @@ Each processor must follow BCE.
 
 ---
 
-# 8. LangChain4j Requirements
+# 9. LangChain4j Requirements
 
 Each processor must:
 
@@ -273,7 +285,7 @@ public interface ContentEnrichmentAgent {
 
 ---
 
-# 9. Fault Tolerance
+# 10. Fault Tolerance
 
 Each processor must implement:
 
@@ -289,7 +301,7 @@ Idempotency must be guaranteed by:
 
 ---
 
-# 10. Non-Functional Requirements
+# 11. Non-Functional Requirements
 
 * Asynchronous processing only
 * Independent deployability
@@ -302,7 +314,7 @@ Idempotency must be guaranteed by:
 
 ---
 
-# 11. PoC Scope Limitations
+# 12. PoC Scope Limitations
 
 For this Proof of Concept:
 
@@ -314,7 +326,7 @@ For this Proof of Concept:
 
 ---
 
-# 12. Expected Outcome
+# 13. Expected Outcome
 
 The final topic ai-content-finalized must contain:
 
@@ -332,7 +344,7 @@ This topic can be consumed by:
 
 ---
 
-# 13. Success Criteria for PoC
+# 14. Success Criteria for PoC
 
 The PoC is considered successful if:
 
