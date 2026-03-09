@@ -283,7 +283,6 @@ The `marketing` object appended to the payload:
 | Field | Type | Description |
 | --- | --- | --- |
 | `marketing.headlineGlobal` | `string` | Primary marketing headline for global distribution |
-| `marketing.headlineDE` | `string` | Region-adapted headline for the German market |
 | `marketing.tagline` | `string` | Short punchy tagline for promotional use |
 | `marketing.shortDescription` | `string` | Brief promotional description for listings and previews |
 
@@ -292,7 +291,6 @@ The `marketing` object appended to the payload:
   "...": "previous fields",
   "marketing": {
     "headlineGlobal": "In a city of shadows, trust is the ultimate risk.",
-    "headlineDE": "A gripping tale of secrets and survival.",
     "tagline": "Power hides in the dark.",
     "shortDescription": "A suspense thriller about corruption and survival."
   }

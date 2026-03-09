@@ -29,7 +29,6 @@ class AiFinalizedContentEventTest {
               },
               "marketing": {
                 "headlineGlobal": "Beyond the stars, love endures.",
-                "headlineDE": "Jenseits der Sterne überlebt die Liebe.",
                 "tagline": "Mankind was born on Earth. It was never meant to die here.",
                 "shortDescription": "An epic journey through space and time."
               }
@@ -53,16 +52,5 @@ class AiFinalizedContentEventTest {
 
         assertThat(event.headlineGlobal()).isEqualTo("Beyond the stars, love endures.");
         assertThat(event.tagline()).isEqualTo("Mankind was born on Earth. It was never meant to die here.");
-    }
-
-    @Test
-    void localizedHeadlinesContainsAllHeadlineKeys() {
-        var json = Json.createReader(new StringReader(SAMPLE)).readObject();
-        var event = AiFinalizedContentEvent.fromJSON(json);
-
-        assertThat(event.localizedHeadlines())
-                .containsEntry("Global", "Beyond the stars, love endures.")
-                .containsEntry("DE", "Jenseits der Sterne überlebt die Liebe.")
-                .hasSize(2);
     }
 }

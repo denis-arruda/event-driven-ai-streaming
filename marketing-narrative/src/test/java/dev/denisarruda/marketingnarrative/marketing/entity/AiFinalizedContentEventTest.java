@@ -35,7 +35,6 @@ class AiFinalizedContentEventTest {
         var source = ContentSensitivityAnalyzedEvent.fromJSON(Json.createReader(new StringReader(SENSITIVITY_SAMPLE)).readObject());
         var marketing = new MarketingResult(
                 "In a city of shadows, trust is the ultimate risk.",
-                "A gripping tale of secrets and survival.",
                 "Power hides in the dark.",
                 "A suspense thriller about corruption and survival.");
 
@@ -50,7 +49,6 @@ class AiFinalizedContentEventTest {
         var source = ContentSensitivityAnalyzedEvent.fromJSON(Json.createReader(new StringReader(SENSITIVITY_SAMPLE)).readObject());
         var marketing = new MarketingResult(
                 "In a city of shadows, trust is the ultimate risk.",
-                "A gripping tale of secrets and survival.",
                 "Power hides in the dark.",
                 "A suspense thriller about corruption and survival.");
 

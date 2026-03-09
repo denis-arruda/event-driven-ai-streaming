@@ -2,9 +2,7 @@ package dev.denisarruda.frontweb.content.entity;
 
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public record AiFinalizedContentEvent(
         String contentId,
@@ -34,21 +32,6 @@ public record AiFinalizedContentEvent(
     public String headlineGlobal() { return marketing.getString("headlineGlobal", ""); }
     public String tagline() { return marketing.getString("tagline", ""); }
     public String shortDescription() { return marketing.getString("shortDescription", ""); }
-
-    /** Returns all headline fields as locale-label → text, e.g. "Global" → "…", "DE" → "…", "JP" → "…" */
-    public Map<String, String> localizedHeadlines() {
-        var result = new LinkedHashMap<String, String>();
-        for (var entry : marketing.entrySet()) {
-            if (entry.getKey().startsWith("headline")) {
-                String locale = entry.getKey().substring("headline".length());
-                String text = marketing.getString(entry.getKey(), "");
-                if (!text.isBlank()) {
-                    result.put(locale, text);
-                }
-            }
-        }
-        return result;
-    }
 
     // Enrichment
     public String emotionalTone() { return enrichment.getString("emotionalTone", ""); }

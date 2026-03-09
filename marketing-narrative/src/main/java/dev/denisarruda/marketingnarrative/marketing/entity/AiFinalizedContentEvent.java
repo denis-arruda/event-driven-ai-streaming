@@ -14,7 +14,6 @@ public record AiFinalizedContentEvent(
     public JsonObject toJSON() {
         var marketingJson = Json.createObjectBuilder()
                 .add("headlineGlobal", marketing.headlineGlobal())
-                .add("headlineDE", marketing.headlineDE())
                 .add("tagline", marketing.tagline())
                 .add("shortDescription", marketing.shortDescription())
                 .build();

@@ -13,7 +13,6 @@ public interface MarketingAgent {
             You are a creative marketing specialist for a global streaming platform.
             Using the content metadata, enrichment analysis, and sensitivity constraints, generate:
             - A global marketing headline (concise, compelling)
-            - A region-adapted headline for Germany (DE)
             - A punchy tagline (max 8 words)
             - A short promotional description (max two sentences)
             Respect sensitivity constraints — avoid flagged themes in headlines.

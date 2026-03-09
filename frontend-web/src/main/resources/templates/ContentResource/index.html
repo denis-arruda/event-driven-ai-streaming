@@ -401,12 +401,10 @@
                             <div class="section">
                                 <div class="section-label" data-tooltip="AI-generated marketing copy tailored for distribution">Marketing</div>
                                 <div class="field-row">
-                                    {#for entry in event.localizedHeadlines.entrySet}
                                     <div class="field">
-                                        <div class="field-label" data-tooltip="Marketing headline localized for {entry.key} audiences">{entry.key} Headline</div>
-                                        <div class="field-value">{entry.value}</div>
+                                        <div class="field-label" data-tooltip="Marketing headline for global distribution">Global Headline</div>
+                                        <div class="field-value">{event.headlineGlobal}</div>
                                     </div>
-                                    {/for}
                                 </div>
                                 <div style="margin-top:.875rem">
                                     <div class="field-label" data-tooltip="Short memorable phrase for promotional use">Tagline</div>
