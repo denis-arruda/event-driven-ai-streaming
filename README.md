@@ -1,6 +1,6 @@
 # Event-Driven AI Streaming
 
-Three independent Quarkus processors that enrich, analyze, and generate marketing assets for published content using LangChain4j (OpenAI gpt-4o) over Kafka.
+Quarkus processors that enrich, analyze, and generate marketing assets for published content using LangChain4j (OpenAI gpt-4o) over Kafka. A web UI lets users submit content and view AI-processed results.
 
 **Pipeline:** `content-published` → `content-enriched` → `content-sensitivity-analyzed` → `ai-content-finalized`
 
@@ -9,6 +9,7 @@ Three independent Quarkus processors that enrich, analyze, and generate marketin
 - [content-enrichment](content-enrichment/) — extracts themes, emotional tone, audience profile, and keywords
 - [sensitivity-compliance](sensitivity-compliance/) — evaluates age ratings, regional restrictions, and risk flags
 - [marketing-narrative](marketing-narrative/) — generates headlines, taglines, and promotional descriptions
+- [frontend-web](frontend-web/) — web UI to publish content and view finalized results
 
 ## Running
 
@@ -30,6 +31,7 @@ With a module running in dev mode, open its Dev UI in the browser:
 | `content-enrichment` | 9090 | http://localhost:9090/q/dev |
 | `sensitivity-compliance` | 9091 | http://localhost:9091/q/dev |
 | `marketing-narrative` | 9093 | http://localhost:9093/q/dev |
+| `frontend-web` | 9095 | http://localhost:9095/q/dev |
 
 ## Tests
 
@@ -63,6 +65,7 @@ Images produced:
 | `content-enrichment` | `denisarruda/content-enrichment:1.0-SNAPSHOT` |
 | `sensitivity-compliance` | `denisarruda/sensitivity-compliance:1.0-SNAPSHOT` |
 | `marketing-narrative` | `denisarruda/marketing-narrative:1.0-SNAPSHOT` |
+| `frontend-web` | `denisarruda/frontend-web:1.0-SNAPSHOT` |
 
 ## Docker Compose
 
@@ -80,8 +83,10 @@ docker compose up
 | `content-enrichment` | `9090` |
 | `sensitivity-compliance` | `9091` |
 | `marketing-narrative` | `9093` |
+| `frontend-web` | `9095` |
+| `kafka-ui` | `8090` |
 
-Connect to Kafka from the host at `localhost:9094`.
+Connect to Kafka from the host at `localhost:9094`. Open the web UI at http://localhost:9095 and Kafka UI at http://localhost:8090.
 
 ## Specification
 

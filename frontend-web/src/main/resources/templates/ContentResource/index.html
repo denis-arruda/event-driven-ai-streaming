@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamIQ</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #0a0a0a;
+            color: #e8e8e8;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ── Sidebar ── */
+        nav {
+            width: 240px;
+            min-width: 240px;
+            background: #111111;
+            border-right: 1px solid #1f1f1f;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            padding: 1.75rem 1.5rem 1.5rem;
+            border-bottom: 1px solid #1f1f1f;
+        }
+
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -.03em;
+            background: linear-gradient(135deg, #e50914, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-sub {
+            font-size: .7rem;
+            color: #555;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            margin-top: .2rem;
+        }
+
+        nav ul { list-style: none; padding: 1rem 0; }
+
+        nav ul li a {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            padding: .75rem 1.5rem;
+            font-size: .875rem;
+            font-weight: 500;
+            color: #666;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: color .15s, background .15s;
+        }
+
+        nav ul li a:hover { color: #ccc; background: #181818; }
+
+        nav ul li a.active {
+            color: #fff;
+            background: #181818;
+            border-left-color: #e50914;
+        }
+
+        /* ── Main ── */
+        main { flex: 1; padding: 2.5rem 2.5rem 3rem; overflow-y: auto; }
+
+        .page-header { margin-bottom: 2rem; }
+        .page-title { font-size: 1.75rem; font-weight: 800; letter-spacing: -.03em; color: #fff; }
+        .page-subtitle { font-size: .875rem; color: #555; margin-top: .35rem; }
+
+        /* ── Catalog grid ── */
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .card {
+            background: #161616;
+            border: 1px solid #222;
+            border-radius: 10px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: border-color .2s, transform .2s;
+        }
+
+        .card:hover { border-color: #e50914; transform: translateY(-2px); }
+
+        .card-badges { display: flex; gap: .5rem; margin-bottom: .875rem; flex-wrap: wrap; }
+
+        .badge-genre {
+            background: rgba(229, 9, 20, .15);
+            color: #ff6b6b;
+            border: 1px solid rgba(229, 9, 20, .3);
+            border-radius: 4px;
+            padding: .2rem .55rem;
+            font-size: .7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        .badge-region {
+            background: rgba(255,255,255,.06);
+            color: #888;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            padding: .2rem .55rem;
+            font-size: .7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        .badge-rating {
+            background: rgba(251,191,36,.1);
+            color: #fbbf24;
+            border: 1px solid rgba(251,191,36,.25);
+            border-radius: 4px;
+            padding: .2rem .55rem;
+            font-size: .7rem;
+            font-weight: 600;
+        }
+
+        .card-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: .5rem; line-height: 1.3; }
+        .card-headline { font-size: .825rem; color: #aaa; margin-bottom: .5rem; line-height: 1.5; }
+        .card-tagline {
+            font-size: .775rem;
+            color: #555;
+            font-style: italic;
+            line-height: 1.5;
+            border-top: 1px solid #1f1f1f;
+            padding-top: .75rem;
+            margin-top: .5rem;
+        }
+
+        .card-hint {
+            font-size: .7rem;
+            color: #333;
+            margin-top: .875rem;
+            text-align: right;
+            letter-spacing: .04em;
+        }
+
+        /* ── Dialog ── */
+        dialog {
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            color: #e8e8e8;
+            max-width: 620px;
+            width: 90vw;
+            padding: 0;
+            box-shadow: 0 24px 80px rgba(0,0,0,.8);
+        }
+
+        dialog::backdrop { background: rgba(0,0,0,.75); backdrop-filter: blur(3px); }
+
+        .dialog-header {
+            padding: 1.5rem 1.75rem 1.25rem;
+            border-bottom: 1px solid #222;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .dialog-title { font-size: 1.2rem; font-weight: 700; color: #fff; line-height: 1.3; }
+
+        .dialog-close {
+            background: none;
+            border: none;
+            color: #555;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: .15rem .3rem;
+            border-radius: 4px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .dialog-close:hover { color: #fff; background: #2a2a2a; }
+
+        .dialog-body { padding: 1.5rem 1.75rem; overflow-y: auto; max-height: 70vh; }
+
+        .dialog-badges { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+
+        .section { margin-bottom: 1.5rem; }
+
+        .section:last-child { margin-bottom: 0; }
+
+        .section-label {
+            font-size: .65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: #444;
+            margin-bottom: .625rem;
+        }
+
+        .section-text { font-size: .875rem; color: #bbb; line-height: 1.65; }
+
+        .tag-list { display: flex; flex-wrap: wrap; gap: .4rem; }
+
+        .tag {
+            background: #222;
+            border: 1px solid #2e2e2e;
+            color: #888;
+            border-radius: 4px;
+            padding: .2rem .55rem;
+            font-size: .75rem;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .field { }
+        .field-label { font-size: .7rem; color: #444; text-transform: uppercase; letter-spacing: .07em; margin-bottom: .25rem; }
+        .field-value { font-size: .85rem; color: #bbb; line-height: 1.5; }
+
+        /* ── Tooltips ── */
+        [data-tooltip] { position: relative; cursor: help; }
+
+        [data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 7px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #252525;
+            border: 1px solid #3a3a3a;
+            color: #ccc;
+            font-size: .7rem;
+            font-style: normal;
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: 0;
+            line-height: 1.4;
+            padding: .35rem .6rem;
+            border-radius: 5px;
+            white-space: nowrap;
+            max-width: 240px;
+            white-space: normal;
+            text-align: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .15s;
+            z-index: 200;
+            box-shadow: 0 4px 16px rgba(0,0,0,.6);
+        }
+
+        [data-tooltip]:hover::after { opacity: 1; }
+
+        /* ── Empty state ── */
+        .empty-state { text-align: center; padding: 5rem 2rem; color: #444; }
+        .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .empty-state p { font-size: .9rem; }
+        .empty-state a { color: #e50914; text-decoration: none; }
+        .empty-state a:hover { text-decoration: underline; }
+
+        /* ── Publish form ── */
+        .form-card {
+            background: #161616;
+            border: 1px solid #222;
+            border-radius: 10px;
+            padding: 2rem;
+            max-width: 600px;
+        }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+        .form-group { display: flex; flex-direction: column; gap: .4rem; }
+        .form-group.full { grid-column: 1 / -1; }
+
+        .form-group label {
+            font-size: .75rem;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            color: #e8e8e8;
+            font-family: inherit;
+            font-size: .875rem;
+            padding: .65rem .85rem;
+            transition: border-color .15s;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus { border-color: #e50914; }
+
+        .form-group textarea { resize: vertical; min-height: 90px; }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder { color: #3a3a3a; }
+
+        .submit-btn {
+            grid-column: 1 / -1;
+            background: #e50914;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: .875rem;
+            font-weight: 700;
+            padding: .75rem 1.5rem;
+            cursor: pointer;
+            justify-self: start;
+            letter-spacing: .02em;
+            transition: background .15s;
+        }
+
+        .submit-btn:hover { background: #c4070f; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="brand">
+            <div class="brand-name">StreamIQ</div>
+            <div class="brand-sub">AI Content Pipeline</div>
+        </div>
+        <ul>
+            <li>
+                <a href="/" class="{#if activeView == 'catalog'}active{/if}">
+                    <span>🎬</span> Catalog
+                </a>
+            </li>
+            <li>
+                <a href="/publish" class="{#if activeView == 'publish'}active{/if}">
+                    <span>＋</span> Publish Content
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <main>
+        {#if activeView == 'catalog'}
+            <div class="page-header">
+                <h1 class="page-title">Catalog</h1>
+                <p class="page-subtitle">AI-processed content ready for distribution — click a card for full details</p>
+            </div>
+
+            {#if events.empty}
+                <div class="empty-state">
+                    <div class="empty-icon">🎞️</div>
+                    <p>No content yet. <a href="/publish">Publish something</a> to start the pipeline.</p>
+                </div>
+            {#else}
+                <div class="catalog-grid">
+                    {#for event in events}
+                    <div class="card" onclick="document.getElementById('dialog-{event_count}').showModal()">
+                        <div class="card-badges">
+                            <span class="badge-genre">{event.genre}</span>
+                            <span class="badge-region">{event.region}</span>
+                            <span class="badge-rating">{event.ageRatingSuggested}</span>
+                        </div>
+                        <div class="card-title">{event.title}</div>
+                        <div class="card-headline">{event.headlineGlobal}</div>
+                        <div class="card-tagline">{event.tagline}</div>
+                        <div class="card-hint">click for details ›</div>
+                    </div>
+
+                    <dialog id="dialog-{event_count}">
+                        <div class="dialog-header">
+                            <div class="dialog-title">{event.title}</div>
+                            <button class="dialog-close" onclick="this.closest('dialog').close()">✕</button>
+                        </div>
+                        <div class="dialog-body">
+                            <div class="dialog-badges">
+                                <span class="badge-genre" data-tooltip="Content genre classification">{event.genre}</span>
+                                <span class="badge-region" data-tooltip="Target distribution region">{event.region}</span>
+                                <span class="badge-rating" data-tooltip="Minimum recommended viewing age">{event.ageRatingSuggested}</span>
+                            </div>
+
+                            <div class="section">
+                                <div class="section-label" data-tooltip="Original description submitted to the pipeline">Description</div>
+                                <div class="section-text">{event.description}</div>
+                            </div>
+
+                            <div class="section">
+                                <div class="section-label" data-tooltip="AI-generated marketing copy tailored for distribution">Marketing</div>
+                                <div class="field-row">
+                                    {#for entry in event.localizedHeadlines.entrySet}
+                                    <div class="field">
+                                        <div class="field-label" data-tooltip="Marketing headline localized for {entry.key} audiences">{entry.key} Headline</div>
+                                        <div class="field-value">{entry.value}</div>
+                                    </div>
+                                    {/for}
+                                </div>
+                                <div style="margin-top:.875rem">
+                                    <div class="field-label" data-tooltip="Short memorable phrase for promotional use">Tagline</div>
+                                    <div class="field-value" style="font-style:italic">{event.tagline}</div>
+                                </div>
+                                <div style="margin-top:.875rem">
+                                    <div class="field-label" data-tooltip="Concise summary for content listings and previews">Short Description</div>
+                                    <div class="field-value">{event.shortDescription}</div>
+                                </div>
+                            </div>
+
+                            <div class="section">
+                                <div class="section-label" data-tooltip="Metadata extracted by the content enrichment processor">Enrichment</div>
+                                <div class="field-row" style="margin-bottom:.875rem">
+                                    <div class="field">
+                                        <div class="field-label" data-tooltip="Dominant emotional quality detected by AI analysis">Emotional Tone</div>
+                                        <div class="field-value">{event.emotionalTone}</div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="field-label" data-tooltip="Target demographic identified for this content">Audience Profile</div>
+                                        <div class="field-value">{event.audienceProfile}</div>
+                                    </div>
+                                </div>
+                                <div class="field-label" data-tooltip="Key narrative or conceptual themes extracted from the content" style="margin-bottom:.4rem">Themes</div>
+                                <div class="tag-list">
+                                    {#for theme in event.themes}
+                                    <span class="tag" data-tooltip="Content theme">{theme}</span>
+                                    {/for}
+                                </div>
+                                <div class="field-label" data-tooltip="Searchable terms associated with this content" style="margin-top:.75rem;margin-bottom:.4rem">Keywords</div>
+                                <div class="tag-list">
+                                    {#for kw in event.keywords}
+                                    <span class="tag" data-tooltip="Content keyword">{kw}</span>
+                                    {/for}
+                                </div>
+                            </div>
+
+                            <div class="section">
+                                <div class="section-label" data-tooltip="Compliance analysis from the sensitivity processor">Sensitivity</div>
+                                <div class="field-row" style="margin-bottom:.875rem">
+                                    <div class="field">
+                                        <div class="field-label" data-tooltip="Minimum recommended viewing age based on content analysis">Age Rating</div>
+                                        <div class="field-value">{event.ageRatingSuggested}</div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="field-label" data-tooltip="Geographic markets flagged for additional compliance review">Sensitive Regions</div>
+                                        <div class="field-value">
+                                            {#if event.sensitiveRegions.empty}—{#else}{#for r in event.sensitiveRegions}{r}{#if r_hasNext}, {/if}{/for}{/if}
+                                        </div>
+                                    </div>
+                                </div>
+                                {#if !event.riskFlags.empty}
+                                <div class="field-label" data-tooltip="Specific sensitivity issues identified by compliance analysis" style="margin-bottom:.4rem">Risk Flags</div>
+                                <div class="tag-list">
+                                    {#for flag in event.riskFlags}
+                                    <span class="tag" data-tooltip="Compliance risk flag" style="color:#ff6b6b;border-color:rgba(229,9,20,.3)">{flag}</span>
+                                    {/for}
+                                </div>
+                                {/if}
+                            </div>
+                        </div>
+                    </dialog>
+                    {/for}
+                </div>
+            {/if}
+
+        {#else}
+            <div class="page-header">
+                <h1 class="page-title">Publish Content</h1>
+                <p class="page-subtitle">Submit a title to the AI pipeline</p>
+            </div>
+
+            <div class="form-card">
+                <form method="post" action="/content" class="form-grid">
+                    <div class="form-group full">
+                        <label for="title">Title</label>
+                        <input id="title" type="text" name="title" required placeholder="e.g. The Dark Knight">
+                    </div>
+                    <div class="form-group full">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" required placeholder="Brief synopsis or content description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="genre">Genre</label>
+                        <input id="genre" type="text" name="genre" required placeholder="e.g. Action, Drama">
+                    </div>
+                    <div class="form-group">
+                        <label for="region">Region</label>
+                        <input id="region" type="text" name="region" required placeholder="e.g. US, DE, GLOBAL">
+                    </div>
+                    <button type="submit" class="submit-btn">Publish to Pipeline →</button>
+                </form>
+            </div>
+        {/if}
+    </main>
+</body>
+</html>

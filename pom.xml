@@ -13,6 +13,7 @@
         <module>content-enrichment</module>
         <module>sensitivity-compliance</module>
         <module>marketing-narrative</module>
+        <module>frontend-web</module>
     </modules>
 
     <properties>

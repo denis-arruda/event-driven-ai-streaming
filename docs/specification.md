@@ -20,7 +20,7 @@ It transforms raw published content into compliance-checked, audience-ready mark
 
 This document defines the specification for a Proof of Concept (PoC) of an AI-driven semantic processing pipeline for a streaming platform.
 
-The system processes newly published content through three LLM-based event processors. Each processor consumes a Kafka topic, enriches the event using an LLM agent implemented with LangChain4j, and republishes the accumulated message to the next topic.
+The system processes newly published content through three LLM-based event processors. Each processor consumes a Kafka topic, enriches the event using an LLM agent implemented with LangChain4j, and republishes the accumulated message to the next topic. A web UI module allows users to submit content to the pipeline and view finalized results.
 
 All components:
 
@@ -45,12 +45,15 @@ content-published
 → content-sensitivity-analyzed
 → Marketing Narrative Processor
 → ai-content-finalized
+→ Frontend Web UI
 
 All communication between components is asynchronous and topic-based. No synchronous HTTP calls are allowed between processors.
 
 ```mermaid
 flowchart LR
-    CMS([CMS])
+    subgraph frontend-web
+        FW[Frontend Web UI]
+    end
 
     subgraph content-enrichment
         CEP[Content Enrichment\nProcessor]
@@ -64,8 +67,6 @@ flowchart LR
         MNP[Marketing Narrative\nProcessor]
     end
 
-    DS([Downstream\nSystems])
-
     CP[[content-published]]
     CE[[content-enriched]]
     CSA[[content-sensitivity-analyzed]]
@@ -74,7 +75,7 @@ flowchart LR
     CEDLQ[[content-enriched-dlq]]
     CSADLQ[[content-sensitivity-analyzed-dlq]]
 
-    CMS --> CP
+    FW --> CP
     CP --> CEP
     CEP --> CE
     CEP -- failure --> CPDLQ
@@ -84,7 +85,7 @@ flowchart LR
     CSA --> MNP
     MNP --> ACF
     MNP -- failure --> CSADLQ
-    ACF --> DS
+    ACF --> FW
 ```
 
 ---
@@ -114,10 +115,10 @@ Java 25 records must be used for domain entities and event models.
 
 | Topic                            | Producer              | Consumer              |
 | -------------------------------- | --------------------- | --------------------- |
-| content-published                | CMS                   | Enrichment Processor  |
+| content-published                | Frontend Web UI       | Enrichment Processor  |
 | content-enriched                 | Enrichment Processor  | Sensitivity Processor |
 | content-sensitivity-analyzed     | Sensitivity Processor | Marketing Processor   |
-| ai-content-finalized             | Marketing Processor   | Downstream Systems    |
+| ai-content-finalized             | Marketing Processor   | Frontend Web UI       |
 | content-published-dlq            | Enrichment Processor  | —                     |
 | content-enriched-dlq             | Sensitivity Processor | —                     |
 | content-sensitivity-analyzed-dlq | Marketing Processor   | —                     |
@@ -129,6 +130,15 @@ Java 25 records must be used for domain entities and event models.
 ## 5.1 Initial Event
 
 Topic: content-published
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `contentId` | `string` | Unique identifier for the content item (UUID) |
+| `title` | `string` | Display title of the content |
+| `description` | `string` | Synopsis or summary of the content |
+| `genre` | `string` | Content genre (e.g. Thriller, Drama, Sci-Fi) |
+| `region` | `string` | Target region or market (e.g. GLOBAL, US, DE) |
+| `timestamp` | `string` | ISO-8601 publication timestamp |
 
 Example payload:
 
@@ -172,6 +182,15 @@ content-enriched
 
 ## Output Structure
 
+The `enrichment` object appended to the payload:
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `enrichment.themes` | `string[]` | Narrative themes identified in the content (e.g. corruption, moral conflict) |
+| `enrichment.emotionalTone` | `string` | Overall emotional tone of the content (e.g. dark suspense, uplifting) |
+| `enrichment.audienceProfile` | `string` | Suggested target audience segment (e.g. adults 25-45) |
+| `enrichment.keywords` | `string[]` | Advanced keywords extracted for indexing and discovery |
+
 ```json
 {
   "contentId": "S123",
@@ -213,6 +232,14 @@ content-sensitivity-analyzed
 
 ## Output Structure
 
+The `sensitivity` object appended to the payload:
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `sensitivity.ageRatingSuggested` | `string` | Recommended age classification (e.g. 12+, 16+, 18+) |
+| `sensitivity.sensitiveRegions` | `string[]` | Regions where the content may require restriction or review |
+| `sensitivity.riskFlags` | `string[]` | Specific sensitivity concerns identified (e.g. political corruption theme) |
+
 ```json
 {
   "...": "previous fields",
@@ -251,6 +278,15 @@ ai-content-finalized
 
 ## Output Structure
 
+The `marketing` object appended to the payload:
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `marketing.headlineGlobal` | `string` | Primary marketing headline for global distribution |
+| `marketing.headlineDE` | `string` | Region-adapted headline for the German market |
+| `marketing.tagline` | `string` | Short punchy tagline for promotional use |
+| `marketing.shortDescription` | `string` | Brief promotional description for listings and previews |
+
 ```json
 {
   "...": "previous fields",
@@ -264,6 +300,30 @@ ai-content-finalized
 ```
 
 The final topic ai-content-finalized contains the fully accumulated event.
+
+---
+
+# 7.4 Frontend Web UI
+
+## Input Topic
+
+ai-content-finalized
+
+## Output Topic
+
+content-published
+
+## Responsibilities
+
+* Accept user-submitted content via a web form (title, description, genre, region)
+* Publish the submitted content as a `ContentPublishedEvent` to `content-published` to start the pipeline
+* Consume `ai-content-finalized` events and display them in a results table
+* Serve a server-side rendered UI using Qute templates
+
+## Notes
+
+* Events are held in an in-memory store (`ContentStore`) — no persistence between restarts
+* Accessible at http://localhost:9095 when running in Docker Compose
 
 ---
 
@@ -376,8 +436,8 @@ The final topic ai-content-finalized must contain:
 
 This topic can be consumed by:
 
+* The `frontend-web` UI (included in this PoC)
 * Content management dashboards
-* UI services
 * Notification systems
 * Analytics pipelines
 

@@ -34,6 +34,23 @@ services:
       timeout: 10s
       retries: 10
 
+  kafka-init:
+    image: apache/kafka:latest
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: >-
+      bash -c "
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic content-published --partitions 1 --replication-factor 1 &&
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic content-enriched --partitions 1 --replication-factor 1 &&
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic content-sensitivity-analyzed --partitions 1 --replication-factor 1 &&
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic ai-content-finalized --partitions 1 --replication-factor 1 &&
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic content-published-dlq --partitions 1 --replication-factor 1 &&
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic content-enriched-dlq --partitions 1 --replication-factor 1 &&
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic content-sensitivity-analyzed-dlq --partitions 1 --replication-factor 1
+      "
+    restart: "no"
+
   content-enrichment:
     image: denisarruda/content-enrichment:1.0-SNAPSHOT
     ports:
@@ -43,8 +60,8 @@ services:
       LLM_API_KEY: ${LLM_API_KEY}
       OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
     depends_on:
-      kafka:
-        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
       lgtm:
         condition: service_started
     healthcheck:
@@ -63,8 +80,8 @@ services:
       LLM_API_KEY: ${LLM_API_KEY}
       OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
     depends_on:
-      kafka:
-        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
       lgtm:
         condition: service_started
     healthcheck:
@@ -73,6 +90,17 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    depends_on:
+      kafka:
+        condition: service_healthy
 
   marketing-narrative:
     image: denisarruda/marketing-narrative:1.0-SNAPSHOT
@@ -83,8 +111,27 @@ services:
       LLM_API_KEY: ${LLM_API_KEY}
       OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
     depends_on:
-      kafka:
-        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
+      lgtm:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/q/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  frontend-web:
+    image: denisarruda/frontend-web:1.0-SNAPSHOT
+    ports:
+      - "9095:8080"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4317
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
       lgtm:
         condition: service_started
     healthcheck:
